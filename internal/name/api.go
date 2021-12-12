@@ -32,11 +32,12 @@ type IpApiResponse struct {
 // TODO: probably move this into its own package
 func (a *api) getIp() (string, error) {
 	resp, err := http.Get(ipApi)
-	defer resp.Body.Close()
 
 	if err != nil {
 		return "", err
 	}
+
+	defer resp.Body.Close()
 
 	var data IpApiResponse
 
@@ -86,11 +87,12 @@ func (a *api) getRecord() (*Record, error) {
 	req.SetBasicAuth(a.config.User, a.config.Token)
 
 	resp, err := http.DefaultClient.Do(req)
-	defer resp.Body.Close()
 
 	if err != nil {
 		return nil, err
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return nil, errors.New(fmt.Sprintf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode)))
@@ -118,11 +120,12 @@ func (a *api) createRecord(ip string) error {
 	req.SetBasicAuth(a.config.User, a.config.Token)
 
 	resp, err := http.DefaultClient.Do(req)
-	defer resp.Body.Close()
 
 	if err != nil {
 		return err
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return errors.New(fmt.Sprintf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode)))
@@ -142,11 +145,12 @@ func (a *api) updateRecord(record *Record, ip string) error {
 	req.SetBasicAuth(a.config.User, a.config.Token)
 
 	resp, err := http.DefaultClient.Do(req)
-	defer resp.Body.Close()
 
 	if err != nil {
 		return err
 	}
+	
+	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return errors.New(fmt.Sprintf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode)))

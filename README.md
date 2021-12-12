@@ -14,6 +14,7 @@ Dynamic DNS for Name.com using v4 name.com API
 
 You can create a token in https://www.name.com/account/settings/api
 
+
 ## Dev
 
 Name.com api docs are in https://www.name.com/api-docs/
