@@ -4,16 +4,17 @@ Dynamic DNS for Name.com using v4 name.com API
 
 ## Usage
 
-		export NAME_DDNS_USER="name.com user"
-		export NAME_DDNS_TOKEN="name.com api token"
-		export NAME_DDNS_UPDATE_EVERY_MINUTES="10"
-		export NAME_DDNS_DOMAIN="tolstoy.eu"
-		export NAME_DDNS_HOST="example" # fqdn will be example.tolstoy.eu.
-		
-		name-ddns
+	docker run --rm \
+		-e "NAME_DDNS_USER=namecom-user" \
+		-e "NAME_DDNS_TOKEN=namecom-token" \
+		-e "NAME_DDNS_DOMAIN=example.com" \
+		-e "NAME_DDNS_HOST=subdomain" \
+		-e "NAME_DDNS_UPDATE_EVERY_MINUTES=10" \
+		naxhh/name-ddns
 
-You can create a token in https://www.name.com/account/settings/api
+This example will create and keep updated an A record on `subdomain.example.com.` pointing to the public IP of the network where the process is running on.
 
+You can create a name.com token in https://www.name.com/account/settings/api
 
 ## Dev
 
