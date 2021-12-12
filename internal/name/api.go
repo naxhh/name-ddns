@@ -29,6 +29,7 @@ type IpApiResponse struct {
 	Ip string `json:"ip"`
 }
 
+// TODO: probably move this into its own package
 func (a *api) getIp() (string, error) {
 	resp, err := http.Get(ipApi)
 	defer resp.Body.Close()

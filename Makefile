@@ -14,5 +14,4 @@ lint:
 	go list ./... | grep -v /vendor/ | xargs -L1 golint -set_exit_status
 
 build:
-	go build -o bin/api ./cmd/api
-	go build -o bin/worker ./cmd/worker
+	go build -o name-ddns ./cmd/ddns
