@@ -10,6 +10,7 @@ Dynamic DNS for Name.com using v4 name.com API
 		-e "NAME_DDNS_DOMAIN=example.com" \
 		-e "NAME_DDNS_HOST=subdomain" \
 		-e "NAME_DDNS_UPDATE_EVERY_MINUTES=10" \
+		-e "TZ=Europe/London" \
 		naxhh/name-ddns
 
 This example will create and keep updated an A record on `subdomain.example.com.` pointing to the public IP of the network where the process is running on.

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 const (
@@ -62,9 +63,13 @@ func (a *api) update(ip string) error {
 	}
 
 	if record == nil {
-		log.Println("No record found. Creating a new record")
+		log.Println(fmt.Sprintf("No record found. Creating a new record %s.%s", a.config.Host, a.config.Domain))
 		err = a.createRecord(ip)
 	} else {
+		now := time.Now()
+		nextUpdateAt := now.Add(a.config.UpdateEvery)
+		log.Println(fmt.Sprintf("Updating record %s.%s", record.Host, a.config.Domain))
+		log.Println(fmt.Sprintf("Will update again at %02d:%02d:%02d", nextUpdateAt.Hour(), nextUpdateAt.Minute(), nextUpdateAt.Second()))
 		err = a.updateRecord(record, ip)
 	}
 
