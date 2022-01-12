@@ -2,19 +2,20 @@ package name
 
 import (
 	"log"
-	"time"
+	"fmt"
+	"github.com/robfig/cron/v3"
 )
 
 type poller struct {
-	ticker *time.Ticker
+	cronValue string
 	stop   chan struct{}
 	api    *api
 }
 
 func New(config *Config) *poller {
 	p := &poller{
-		ticker: time.NewTicker(config.UpdateEvery),
-		stop:   config.StopChannel,
+		cronValue: config.UpdateCron,
+		stop: config.StopChannel,
 		api:    newApi(config),
 	}
 
@@ -23,28 +24,39 @@ func New(config *Config) *poller {
 
 func (p *poller) Run() {
 	p.run()
-
-	for {
-		select {
-		case <-p.ticker.C:
-			p.run()
-		case <-p.stop:
-			p.ticker.Stop()
-			return
-		}
-	}
 }
 
-func (p *poller) run() {
+func updater(p *poller) {
 	ip, err := p.api.getIp()
 
 	if err != nil {
-		log.Println("Failed retrieving IP:", err, "no changes will be performed this execution")
+		log.Println(fmt.Sprintf("Failed retrieving IP:", err, "no changes will be performed this execution"))
 		return
 	}
 
 	if err = p.api.update(ip); err != nil {
-		log.Println("Failed updating record", err, "no changes will be performed this execution")
+		log.Println(fmt.Sprintf("Failed updating record", err, "no changes will be performed this execution"))
 		return
+	}
+}
+
+func (p *poller) run() {
+
+	updater(p)
+
+	log.Println(fmt.Sprintf("Updating with cron schedule: %s", p.cronValue))
+
+	c := cron.New()
+	c.AddFunc(p.cronValue, func() {
+		updater(p)
+	})
+	c.Start()
+
+	for {
+		select {
+		case <-p.stop:
+			c.Stop()
+			return
+		}
 	}
 }

@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o /name-ddns ./cmd/ddns
+RUN go get github.com/robfig/cron/v3 && go build -o /name-ddns ./cmd/ddns
 
 
 FROM debian:bullseye-slim
