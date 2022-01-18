@@ -39,7 +39,7 @@ func (p *poller) run() {
 	ip, err := p.api.getIp()
 
 	if err != nil {
-		log.Println("Failed retrieving ip:", err, "no changes will be performed this execution")
+		log.Println("Failed retrieving IP:", err, "no changes will be performed this execution")
 		return
 	}
 
