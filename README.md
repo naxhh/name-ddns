@@ -4,7 +4,7 @@ Dynamic DNS for Name.com using v4 name.com API
 
 ## Usage
 
-	docker run --rm \
+	docker run --rm -it \
 		-e "NAME_DDNS_USER=namecom-user" \
 		-e "NAME_DDNS_TOKEN=namecom-token" \
 		-e "NAME_DDNS_DOMAIN=example.com" \

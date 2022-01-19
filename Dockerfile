@@ -8,15 +8,20 @@ RUN go mod download
 
 COPY . .
 
-RUN go get github.com/robfig/cron/v3 && go build -o /name-ddns ./cmd/ddns
-
+RUN go build -o /name-ddns ./cmd/ddns
 
 FROM debian:bullseye-slim
 
+ENV NAME_DDNS_UPDATE_CRON */10 * * * *
+
 WORKDIR /
 
-RUN apt-get update && apt-get install -y ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates cron
 
 COPY --from=build /name-ddns /bin/name-ddns
+COPY entrypoint.sh /entrypoint.sh
 
-CMD ["/bin/name-ddns"]
+RUN chmod +x /entrypoint.sh
+RUN touch /cron.log
+
+ENTRYPOINT ["/entrypoint.sh"]
