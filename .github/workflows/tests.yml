@@ -20,5 +20,8 @@ jobs:
 
     - run: go env
 
-    - name: Build
+    - name: Build binary
       run: GOFLAGS="-mod=mod" GOPROXY="https://proxy.golang.org,direct" make build
+
+    - name: Build docker image
+      run: make docker
