@@ -8,9 +8,6 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    env:
-      GOFLAGS: -mod=vendor
-      GOPROXY: "off"
 
     steps:
     - uses: actions/checkout@v3
@@ -21,7 +18,7 @@ jobs:
     - run: go env
 
     - name: Build binary
-      run: GOFLAGS="-mod=mod" GOPROXY="https://proxy.golang.org,direct" make build
+      run: make build
 
     - name: Build docker image
       run: make docker
