@@ -24,11 +24,6 @@ jobs:
     - name: Vet lint
       run: go vet ./...
 
-    - name: Build binary
-      run: make build
-
-    - name: Build docker image
-      run: make docker
   build:
     name: Build
     runs-on: ubuntu-latest
