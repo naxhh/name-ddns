@@ -15,14 +15,10 @@ const (
 	updateRecords        = "https://api.name.com/v4/domains/%s/records/%d"
 )
 
-type api struct {
-	config *Config
-}
+type api struct {}
 
-func newApi(config *Config) *api {
-	return &api{
-		config: config,
-	}
+func newApi() *api {
+	return &api{}
 }
 
 type IpApiResponse struct {
@@ -30,7 +26,7 @@ type IpApiResponse struct {
 }
 
 // TODO: probably move this into its own package
-func (a *api) getIp() (string, error) {
+func (a *api) getIp(task Task) (string, error) {
 	resp, err := http.Get(ipApi)
 
 	if err != nil {
@@ -52,26 +48,21 @@ func (a *api) getIp() (string, error) {
 	return data.Ip, nil
 }
 
-func (a *api) update(ip string) error {
+func (a *api) update(task Task, ip string) error {
 
 	// Get record id
-	record, err := a.getRecord()
+	record, err := a.getRecord(task)
 
 	if err != nil {
 		return err
 	}
 
 	if record == nil {
-		log.Println(fmt.Sprintf("No record found. Creating a new record %s.%s", a.config.Host, a.config.Domain))
-		err = a.createRecord(ip)
+		log.Println(fmt.Sprintf("No record found. Creating a new record %s.%s", task.Host, task.Domain))
+		err = a.createRecord(task ,ip)
 	} else {
-		/*
-		now := time.Now()
-		nextUpdateAt := now.Add(a.config.UpdateEvery)
-		log.Println(fmt.Sprintf("Updating record %s.%s", record.Host, a.config.Domain))
-		log.Println(fmt.Sprintf("Will update again at %02d:%02d:%02d", nextUpdateAt.Hour(), nextUpdateAt.Minute(), nextUpdateAt.Second()))
-		*/
-		err = a.updateRecord(record, ip)
+		log.Println(fmt.Sprintf("Updating record %s.%s", record.Host, task.Domain))
+		err = a.updateRecord(task, record, ip)
 	}
 
 	return err
@@ -88,9 +79,9 @@ type Record struct {
 	Answer string `json:"answer,omitempty"`
 }
 
-func (a *api) getRecord() (*Record, error) {
-	req, _ := http.NewRequest("GET", fmt.Sprintf(records, a.config.Domain), nil)
-	req.SetBasicAuth(a.config.User, a.config.Token)
+func (a *api) getRecord(task Task) (*Record, error) {
+	req, _ := http.NewRequest("GET", fmt.Sprintf(records, task.Domain), nil)
+	req.SetBasicAuth(task.User, task.Token)
 
 	resp, err := http.DefaultClient.Do(req)
 
@@ -111,7 +102,7 @@ func (a *api) getRecord() (*Record, error) {
 	}
 
 	for _, record := range data.Records {
-		if record.Type == "A" && record.Host == a.config.Host {
+		if record.Type == "A" && record.Host == task.Host {
 			return &record, nil
 		}
 	}
@@ -119,11 +110,11 @@ func (a *api) getRecord() (*Record, error) {
 	return nil, nil
 }
 
-func (a *api) createRecord(ip string) error {
-	payload, _ := json.Marshal(map[string]interface{}{"host": a.config.Host, "type": "A", "answer": ip, "ttl": 300})
+func (a *api) createRecord(task Task, ip string) error {
+	payload, _ := json.Marshal(map[string]interface{}{"host": task.Host, "type": "A", "answer": ip, "ttl": 300})
 
-	req, _ := http.NewRequest("POST", fmt.Sprintf(records, a.config.Domain), bytes.NewBuffer(payload))
-	req.SetBasicAuth(a.config.User, a.config.Token)
+	req, _ := http.NewRequest("POST", fmt.Sprintf(records, task.Domain), bytes.NewBuffer(payload))
+	req.SetBasicAuth(task.User, task.Token)
 
 	resp, err := http.DefaultClient.Do(req)
 
@@ -140,15 +131,15 @@ func (a *api) createRecord(ip string) error {
 	return nil
 }
 
-func (a *api) updateRecord(record *Record, ip string) error {
+func (a *api) updateRecord(task Task, record *Record, ip string) error {
 	if record.Answer == ip {
 		return nil
 	}
 
 	payload, _ := json.Marshal(map[string]interface{}{"host": record.Host, "type": record.Type, "answer": ip, "ttl": 300})
 
-	req, _ := http.NewRequest("PUT", fmt.Sprintf(updateRecords, a.config.Domain, record.Id), bytes.NewBuffer(payload))
-	req.SetBasicAuth(a.config.User, a.config.Token)
+	req, _ := http.NewRequest("PUT", fmt.Sprintf(updateRecords, task.Domain, record.Id), bytes.NewBuffer(payload))
+	req.SetBasicAuth(task.User, task.Token)
 
 	resp, err := http.DefaultClient.Do(req)
 
