@@ -9,7 +9,7 @@ Dynamic DNS for Name.com using v4 name.com API
 		-e "NAME_DDNS_TOKEN=namecom-token" \
 		-e "NAME_DDNS_DOMAIN=example.com" \
 		-e "NAME_DDNS_HOST=subdomain" \
-		-e "NAME_DDNS_UPDATE_EVERY_MINUTES=10" \
+		-e "NAME_DDNS_UPDATE_EVERY=@every 10m" \
 		-e "TZ=Europe/London" \
 		naxhh/name-ddns
 

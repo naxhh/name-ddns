@@ -2,34 +2,35 @@ package name
 
 import (
 	"log"
-	"time"
+	"github.com/robfig/cron/v3"
 )
 
 type poller struct {
-	ticker *time.Ticker
 	stop   chan struct{}
 	api    *api
+	cron   *cron.Cron
+	config *Config
 }
 
 func New(config *Config) *poller {
 	p := &poller{
-		ticker: time.NewTicker(config.UpdateEvery),
 		stop:   config.StopChannel,
 		api:    newApi(config),
+		cron:   cron.New(),
+		config: config,
 	}
 
 	return p
 }
 
 func (p *poller) Run() {
-	p.run()
+	p.cron.AddFunc(p.config.UpdateEveryCronFormat, func() { p.run() })
+	p.cron.Start()
 
 	for {
 		select {
-		case <-p.ticker.C:
-			p.run()
 		case <-p.stop:
-			p.ticker.Stop()
+			p.cron.Stop()
 			return
 		}
 	}
