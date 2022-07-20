@@ -21,4 +21,4 @@ jobs:
     - run: go env
 
     - name: Build
-      run: GOFLAGS="-mod=mod" make build
+      run: GOFLAGS="-mod=mod" GOPROXY="https://proxy.golang.org,direct" make build
