@@ -27,13 +27,6 @@ Second example runs every 5 minutes using cron format and configures an A record
 You can create a name.com token in https://www.name.com/account/settings/api
 Supported cron formats defined at https://pkg.go.dev/github.com/robfig/cron
 
-## Docker images
-
-Images are provided on `amd64` by default.
-But versions will be also pushed with a suffix of `-arm64` for arm architecture (read M1 laptops)
-
-Prefer using version tags instead of `latest`
-
 ## Dev
 
 Name.com api docs are in https://www.name.com/api-docs/
