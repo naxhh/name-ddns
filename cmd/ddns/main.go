@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"github.com/naxhh/name-ddns/internal/name"
 	"github.com/naxhh/name-ddns/internal/system"
+	"log"
 	"os"
 )
 

@@ -1,25 +1,25 @@
 package name
 
 import (
-	"os"
+	"errors"
 	"fmt"
 	"log"
-	"errors"
+	"os"
 )
 
 type Task struct {
 	CronExpression string
 
-	User string
+	User  string
 	Token string
 
 	Domain string
-	Host string
+	Host   string
 }
 
 type Config struct {
 	StopChannel chan struct{}
-	Tasks []Task
+	Tasks       []Task
 }
 
 func NewConfig(stopChannel chan struct{}) *Config {
@@ -52,19 +52,18 @@ func NewConfig(stopChannel chan struct{}) *Config {
 
 		tasks = append(tasks, Task{
 			CronExpression: cron,
-			User:  user,
-			Token: token,
-			Domain: domain,
-			Host:   host,
+			User:           user,
+			Token:          token,
+			Domain:         domain,
+			Host:           host,
 		})
-
 
 		i++
 	}
 
 	return &Config{
 		StopChannel: stopChannel,
-		Tasks: tasks,
+		Tasks:       tasks,
 	}
 }
 

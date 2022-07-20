@@ -1,9 +1,9 @@
 package name
 
 import (
-	"log"
 	"fmt"
 	"github.com/robfig/cron/v3"
+	"log"
 )
 
 type poller struct {

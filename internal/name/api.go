@@ -15,7 +15,7 @@ const (
 	updateRecords        = "https://api.name.com/v4/domains/%s/records/%d"
 )
 
-type api struct {}
+type api struct{}
 
 func newApi() *api {
 	return &api{}
@@ -59,7 +59,7 @@ func (a *api) update(task Task, ip string) error {
 
 	if record == nil {
 		log.Println(fmt.Sprintf("No record found. Creating a new record %s.%s", task.Host, task.Domain))
-		err = a.createRecord(task ,ip)
+		err = a.createRecord(task, ip)
 	} else {
 		log.Println(fmt.Sprintf("Updating record %s.%s", record.Host, task.Domain))
 		err = a.updateRecord(task, record, ip)
@@ -146,7 +146,7 @@ func (a *api) updateRecord(task Task, record *Record, ip string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
