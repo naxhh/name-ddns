@@ -7,7 +7,7 @@ import (
 )
 
 func GetSignalNotifier() chan struct{} {
-	signalChannel := make(chan os.Signal)
+	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(
 		signalChannel,
 		syscall.SIGHUP,

@@ -1,7 +1,6 @@
 package name
 
 import (
-	"fmt"
 	"github.com/robfig/cron/v3"
 	"log"
 )
@@ -27,17 +26,18 @@ func New(config *Config) *poller {
 func (p *poller) Run() {
 	for _, task := range p.config.Tasks {
 		func(task Task) {
-			p.cron.AddFunc(task.CronExpression, func() { p.run(task) })
+			_, err := p.cron.AddFunc(task.CronExpression, func() { p.run(task) })
+			if err != nil {
+				panic(err)
+			}
 		}(task)
 	}
 	p.cron.Start()
 
 	for {
-		select {
-		case <-p.stop:
-			p.cron.Stop()
-			return
-		}
+		<-p.stop
+		p.cron.Stop()
+		return
 	}
 }
 
@@ -45,12 +45,12 @@ func (p *poller) run(task Task) {
 	ip, err := p.api.getIp(task)
 
 	if err != nil {
-		log.Println(fmt.Sprintf("Failed retrieving IP for %s.%s: %s no changes will be performed this execution", task.Host, task.Domain, err))
+		log.Printf("Failed retrieving IP for %s.%s: %s no changes will be performed this execution", task.Host, task.Domain, err)
 		return
 	}
 
 	if err = p.api.update(task, ip); err != nil {
-		log.Println(fmt.Sprintf("Failed updating record for %s.%s: %s no changes will be performed this execution", task.Host, task.Domain, err))
+		log.Printf("Failed updating record for %s.%s: %s no changes will be performed this execution", task.Host, task.Domain, err)
 		return
 	}
 }
