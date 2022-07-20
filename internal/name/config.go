@@ -71,28 +71,28 @@ func (c *Config) Validate() error {
 	if len(c.Tasks) == 0 {
 		return errors.New("No entries configured, closing")
 	} else {
-		log.Println(fmt.Sprintf("Validating %d entries", len(c.Tasks)))
+		log.Printf("Validating %d entries", len(c.Tasks))
 	}
 
 	for key, task := range c.Tasks {
 		if task.CronExpression == "" {
-			return errors.New(fmt.Sprintf("Cron expression was empty on entry %d", key))
+			return fmt.Errorf("Cron expression was empty on entry %d", key)
 		}
 
 		if task.User == "" {
-			return errors.New(fmt.Sprintf("User was empty on entry %d", key))
+			return fmt.Errorf("User was empty on entry %d", key)
 		}
 
 		if task.Token == "" {
-			return errors.New(fmt.Sprintf("Token was empty on entry %d", key))
+			return fmt.Errorf("Token was empty on entry %d", key)
 		}
 
 		if task.Domain == "" {
-			return errors.New(fmt.Sprintf("Domain was empty on entry %d", key))
+			return fmt.Errorf("Domain was empty on entry %d", key)
 		}
 
 		if task.Host == "" {
-			return errors.New(fmt.Sprintf("Host was empty on entry %d", key))
+			return fmt.Errorf("Host was empty on entry %d", key)
 		}
 	}
 	return nil

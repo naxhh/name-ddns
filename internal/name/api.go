@@ -3,7 +3,6 @@ package name
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,8 +10,8 @@ import (
 
 const (
 	ipApi         string = "https://api.myip.com"
-	records              = "https://api.name.com/v4/domains/%s/records"
-	updateRecords        = "https://api.name.com/v4/domains/%s/records/%d"
+	records       string = "https://api.name.com/v4/domains/%s/records"
+	updateRecords string = "https://api.name.com/v4/domains/%s/records/%d"
 )
 
 type api struct{}
@@ -42,7 +41,7 @@ func (a *api) getIp(task Task) (string, error) {
 	}
 
 	if data.Ip == "" {
-		return "", errors.New("Ip field is empty")
+		return "", fmt.Errorf("Ip field is empty")
 	}
 
 	return data.Ip, nil
@@ -58,10 +57,10 @@ func (a *api) update(task Task, ip string) error {
 	}
 
 	if record == nil {
-		log.Println(fmt.Sprintf("No record found. Creating a new record %s.%s", task.Host, task.Domain))
+		log.Printf("No record found. Creating a new record %s.%s", task.Host, task.Domain)
 		err = a.createRecord(task, ip)
 	} else {
-		log.Println(fmt.Sprintf("Updating record %s.%s", record.Host, task.Domain))
+		log.Printf("Updating record %s.%s", record.Host, task.Domain)
 		err = a.updateRecord(task, record, ip)
 	}
 
@@ -92,7 +91,7 @@ func (a *api) getRecord(task Task) (*Record, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, errors.New(fmt.Sprintf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode)))
+		return nil, fmt.Errorf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode))
 	}
 
 	var data RecordsResponse
@@ -125,7 +124,7 @@ func (a *api) createRecord(task Task, ip string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return errors.New(fmt.Sprintf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode)))
+		return fmt.Errorf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode))
 	}
 
 	return nil
@@ -150,7 +149,7 @@ func (a *api) updateRecord(task Task, record *Record, ip string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return errors.New(fmt.Sprintf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode)))
+		return fmt.Errorf("Unexpected HTTP Response Status: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode))
 	}
 
 	return nil

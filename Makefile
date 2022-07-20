@@ -12,6 +12,10 @@ default: help
 fmt: ## Formats all files
 	@go fmt ./...
 
+lint: ## Lints all files to the standard
+	@go vet ./...
+	@golangci-lint run
+
 test: ## Run all tests
 	@go clean --testcache && go test ./...
 
