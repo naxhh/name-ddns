@@ -21,10 +21,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: naxhh/name-ddns:latest
+
+      - name: Build docker image
+        run: make docker
+
+      - name: Publish docker images
+        run: make publish
