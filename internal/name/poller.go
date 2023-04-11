@@ -25,6 +25,7 @@ func New(config *Config) *poller {
 
 func (p *poller) Run() {
 	for _, task := range p.config.Tasks {
+		p.run(task)
 		func(task Task) {
 			_, err := p.cron.AddFunc(task.CronExpression, func() { p.run(task) })
 			if err != nil {
